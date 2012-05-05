@@ -6,6 +6,11 @@ The package uses multiple techniques to mitigate damage:
 	- defined environment: reset all environment variables
 
 
+To install and use the mitigation execute the following:
+
+	go get github.com/sarnowski/mitigation
+
+
 Copyright (c) 2012 Tobias Sarnowski <tobias@trustedco.de>
 
 Permission to use, copy, modify, and distribute this software for any
