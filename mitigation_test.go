@@ -13,6 +13,13 @@ import (
 )
 
 // The test will only work when running as root.
+func TestCanActivate(t *testing.T) {
+	if !CanActivate() {
+		t.Fatal("Tests must run as root!")
+	}
+}
+
+// The test will only work when running as root.
 func TestActivate(t *testing.T) {
 	// create temporary directory to test chrooting
 	tmp, err := ioutil.TempDir("", "mitigationtest")
