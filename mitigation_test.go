@@ -3,6 +3,8 @@ package mitigation
 import (
 	"io/ioutil"
 	"log"
+	"net"
+	"net/http"
 	"os"
 	"syscall"
 	"testing"
@@ -66,13 +68,15 @@ func TestActivate(t *testing.T) {
 func ExampleActivate() {
 	// prepare application execution and allocate ressources with
 	// root privileges (e.g. open port 80 for an http server)
+	listener, _ := net.Listen("tcp", ":80")
 
 	// on OpenBSD, the "www" user has the ID 67 and the /var/www
 	// directory is made to chroot into.
-	Activate(67, 67, "/var/www")
+	Activate(67, 67, "/var/www/htdocs")
 
 	// The application is now chrooted and only runs with "www"
 	// privileges.
+	http.Serve(listener, http.FileServer(http.Dir("/")))
 }
 
 func ExampleCanActivate() {
@@ -80,7 +84,7 @@ func ExampleCanActivate() {
 
 	if CanActivate() {
 		// activate the mitigation and reset work directory to "/"
-		Activate(67, 67, "/var/www")
+		Activate(67, 67, workDir)
 		workDir = "/"
 	} else {
 		// we can handle this but log a warning
