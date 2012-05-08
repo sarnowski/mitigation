@@ -1,0 +1,19 @@
+Build the webserver via:
+
+    # go install github.com/sarnowski/mitigation/example-httpd
+
+
+No become root and start the "example-httpd":
+
+    # $GOPATH/bin/example-httpd
+
+There are some options to configure the server:
+
+    # $GOPATH/bin/example-httpd -help
+
+A typical test run on debian system would look like this:
+
+    # $GOPATH/bin/example-httpd -htdocs="/var/www" -listen=":81" -user="www-data"
+
+Now verify that it serves the correct directory and switched
+its user to "www-data".
