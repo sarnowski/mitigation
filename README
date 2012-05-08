@@ -1,15 +1,39 @@
-Package mitigation provides the possibility to prevent system damage.
+mitigation for go applications
+=============================================================================
+
+Package mitigation provides the possibility to prevent damage caused by bugs
+or exploits.
+
+
+Techniques
+-----------------------------------------------------------------------------
 
 The package uses multiple techniques to mitigate damage:
+
 	- privilege revocation: switch to an unprivileged user
-	- chroot jail: hide the real filesystem
+	- chroot jail: restrict filesystem access
 	- defined environment: reset all environment variables
 
+Enables the ability to implement system-supported privilege seperation.
 
-To install and use the mitigation execute the following:
+
+Installation
+-----------------------------------------------------------------------------
+
+To install and use the mitigation execute the following command:
 
 	go get github.com/sarnowski/mitigation
 
+
+Documentation
+-----------------------------------------------------------------------------
+
+Documentation is provided in the go way and is accessible through "godoc".
+You will find explanation, requirements and examples.
+
+
+License
+-----------------------------------------------------------------------------
 
 Copyright (c) 2012 Tobias Sarnowski <tobias@trustedco.de>
 
