@@ -6,6 +6,8 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/user"
+	"strconv"
 	"syscall"
 	"testing"
 )
@@ -70,9 +72,16 @@ func ExampleActivate() {
 	// root privileges (e.g. open port 80 for an http server)
 	listener, _ := net.Listen("tcp", ":80")
 
-	// on OpenBSD, the "www" user has the ID 67 and the /var/www
-	// directory is made to chroot into.
-	Activate(67, 67, "/var/www/htdocs")
+
+	// on OpenBSD, the "www" user is dedicated to serve the
+	// /var/www/htdocs directory in a chrooted way
+	wwwUser, _ := user.Lookup("www")
+	uid, _ := strconv.Atoi(wwwUser.Uid)
+	gid, _ := strconv.Atoi(wwwUser.Gid)
+
+	// now drop all privileges and chroot!
+	Activate(uid, gid, "/var/www/htdocs")
+
 
 	// The application is now chrooted and only runs with "www"
 	// privileges.

@@ -1,9 +1,9 @@
 /*
-Package mitigation provides the possibility to prevent system damage.
+Package mitigation provides the possibility to prevent damage through bugs or exploits.
 
 The package uses multiple techniques to mitigate damage:
 	- privilege revocation: switch to an unprivileged user
-	- chroot jail: hide the real filesystem
+	- chroot jail: restrict filesystem access
 	- defined environment: reset all environment variables
 
 The following prerequisites are nessecary:
