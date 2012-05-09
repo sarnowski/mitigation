@@ -1,3 +1,5 @@
+// Package example-httpd provides a minimalistic http server implementation using
+// the mitigation package.
 package main
 
 import (
