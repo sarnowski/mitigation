@@ -12,6 +12,13 @@ import (
 	"testing"
 )
 
+const (
+	TEST_UID = 1000
+	TEST_GID = 1000
+
+	TEST_ROUTINES_COUNT = 100
+)
+
 // The test will only work when running as root.
 func TestCanActivate(t *testing.T) {
 	if !CanActivate() {
@@ -32,22 +39,34 @@ func TestActivate(t *testing.T) {
 		t.Fatal("Could not change temporary directory permissions!")
 	}
 
+	// create some go routines as root to later test them
+	var sync chan bool = make(chan bool)
+	for i := 0; i < TEST_ROUTINES_COUNT; i++ {
+		go func() {
+			// no op
+			sync <- true
+		}()
+	}
+	for i := 0; i < TEST_ROUTINES_COUNT; i++ {
+		<-sync
+	}
+
 	// do it!
-	Activate(1000, 1000, tmp)
+	Activate(TEST_UID, TEST_GID, tmp)
 
 	// verify uids
 	uid := syscall.Getuid()
-	if uid != 1000 {
+	if uid != TEST_UID {
 		t.Error("Failed to change UID")
 	}
 	euid := syscall.Geteuid()
-	if euid != 1000 {
+	if euid != TEST_UID {
 		t.Error("Failed to change EUID")
 	}
 
 	// verify gid
 	gid := syscall.Getgid()
-	if gid != 1000 {
+	if gid != TEST_GID {
 		t.Error("Failed to change GID")
 	}
 
@@ -71,6 +90,25 @@ func TestActivate(t *testing.T) {
 	}
 	if len(files) > 0 {
 		t.Error("Root not changed to empty temporary directory!")
+	}
+
+	// test setuid() behaviour
+	var results chan int = make(chan int)
+
+	// start multiple goroutines, in a good OS, all all routines
+	// should be switched to the new user
+	for i := 0; i < TEST_ROUTINES_COUNT; i++ {
+		go func() {
+			results <- syscall.Getuid()
+		}()
+	}
+
+	// check the results
+	for i := 0; i < TEST_ROUTINES_COUNT; i++ {
+		uid := <-results
+		if uid != TEST_UID {
+			t.Fatal("false uid: ", uid, " (you are using an unsafe os!)")
+		}
 	}
 }
 

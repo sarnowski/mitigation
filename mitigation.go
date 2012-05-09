@@ -15,16 +15,40 @@ The following prerequisites are nessecary:
 Activate() will not return any error. It will panic as soon as anything
 goes wrong because there is no good way to recover. To provide a sensible
 fallback you can use the CanActivate() function.
+
+WARNING: Windows is not supported. Windows has no equivalents for the used
+techniques.
+
+WARNING: Linux is not POSIX compatible and therefor setuid() only changes the
+user ID of the current thread. At the time, there is no way to safely use
+this within go as there may already be other threads spawned at the time
+this library is called. More about this issue here:
+	http://code.google.com/p/go/issues/detail?id=1435
+	http://groups.google.com/group/golang-nuts/browse_thread/thread/059597aafdd84a0e
+
+The following table summarizes the behaviours:
+	openbsd: safe
+	freebsd: safe
+	darwin:  safe
+	linux:   unsafe
+	windows: not supported
+
+To verify your current setup, run the mitigation tests with GOMAXPROCS=4.
 */
 package mitigation
 
 import (
 	"os"
+	"runtime"
 	"syscall"
 )
 
 // Checks if it is possible to activate the mitigation.
 func CanActivate() bool {
+	if runtime.GOOS == "windows" {
+		return false
+	}
+
 	uid := syscall.Getuid()
 	return uid == 0
 }
@@ -32,7 +56,7 @@ func CanActivate() bool {
 // Activates the mitigation measurements.
 func Activate(uid int, gid int, path string) {
 	if !CanActivate() {
-		panic("Cannot revoke privileges!")
+		panic("Cannot activate mitigation measurements!")
 	}
 
 	// chroot directory
