@@ -82,8 +82,12 @@ func Activate(uid int, gid int, path string) {
 	if err != nil {
 		panic("Could not read groups!")
 	}
-	if len(gids) != 0 {
+	if len(gids) > 1 {
 		panic("Could not drop groups!")
+	} else if len(gids) == 1 {
+		if gids[0] != gid {
+			panic("Could not drop foreign groups!")
+		}
 	}
 
 	// change group

@@ -84,8 +84,12 @@ func TestActivate(t *testing.T) {
 	if err != nil {
 		t.Fatal("Could not get group list")
 	}
-	if len(gids) != 0 {
+	if len(gids) > 1 {
 		t.Error("Not all groups are dropped!")
+	} else if len(gids) == 1 {
+		if gids[0] != TEST_GID {
+			t.Error("Not all foreign groups are dropped!")
+		}
 	}
 
 	// verify directory
