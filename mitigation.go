@@ -71,7 +71,7 @@ func Activate(uid int, gid int, path string) {
 	}
 
 	// drop all other groups
-	err = syscall.Setgroups([]int{})
+	err = syscall.Setgroups([]int{gid})
 	if err != nil {
 		panic(err)
 	}
