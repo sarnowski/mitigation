@@ -33,7 +33,6 @@ The following table summarizes the behaviours:
 	linux:   unsafe
 	windows: not supported
 
-To verify your current setup, run the mitigation tests with GOMAXPROCS=4.
 */
 package mitigation
 

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/user"
+	"runtime"
 	"strconv"
 	"syscall"
 	"testing"
@@ -38,6 +39,9 @@ func TestActivate(t *testing.T) {
 	if err != nil {
 		t.Fatal("Could not change temporary directory permissions!")
 	}
+
+	// improve cpu usage to test for broken os implementations of setuid()
+	runtime.GOMAXPROCS(2)
 
 	// create some go routines as root to later test them
 	var sync chan bool = make(chan bool)
@@ -125,7 +129,8 @@ func TestActivate(t *testing.T) {
 	for i := 0; i < TEST_ROUTINES_COUNT; i++ {
 		uid := <-results
 		if uid != TEST_UID {
-			t.Fatal("false uid: ", uid, " (you are using an unsafe os!)")
+			t.Error("false uid: ", uid, " (you are using an unsafe os, read the package documentation!)")
+			break
 		}
 	}
 }
