@@ -51,6 +51,15 @@ func TestActivate(t *testing.T) {
 		<-sync
 	}
 
+	// modify environment
+	err = os.Setenv("malicous_env", "bad string")
+	if err != nil {
+		t.Fatal("Cannot setup environment variables!")
+	}
+	if len(os.Environ()) == 0 {
+		t.Fatal("Environ() or Setenv() are broken!")
+	}
+
 	// do it!
 	Activate(TEST_UID, TEST_GID, tmp)
 
@@ -90,6 +99,11 @@ func TestActivate(t *testing.T) {
 	}
 	if len(files) > 0 {
 		t.Error("Root not changed to empty temporary directory!")
+	}
+
+	// verify environment
+	if len(os.Environ()) > 0 {
+		t.Error("Environment variables found!")
 	}
 
 	// test setuid() behaviour
