@@ -44,7 +44,7 @@ import (
 
 // Checks if it is possible to activate the mitigation.
 func CanActivate() bool {
-	if runtime.GOOS == "windows" {
+	if runtime.GOOS == "windows" || runtime.GOARCH == "arm" {
 		return false
 	}
 
